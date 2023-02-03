@@ -278,3 +278,92 @@ detection:
                 - 127.0.0.1
     condition: selection && !filter *
 ```
+
+
+***8. Combining STR Omegas***
+
+`OpenAI prompt:` 
+> This is  STR Omega with UUID EDR-SYM158-RUN
+```
+# omega - compound/second order attack behavior detection by Securonix
+title: Possible Hafnium Group Activity Reverse Shell Connection CommandLine Analytic
+uuid: EDR-SYM158-RUN
+
+references:
+  - https://www.microsoft.com/security/blog/2021/03/02/hafnium-targeting-exchange-servers/
+  - https://blog.truesec.com/2021/03/07/exchange-zero-day-proxylogon-and-hafnium/
+
+omega_securonix_ueba:
+    snpr_policy:
+        violator: Activityaccount
+        category: 'ALERT'
+        threatname: 'Suspicious Access Pattern'
+        functionality: 'Endpoint Management Systems'
+
+logsource:
+  category: process_creation
+  product: windows
+
+detection:
+  selection:
+    CommandLine|contains:
+      - "system.net.sockets.tcpclient"
+  condition: selection
+```
+>
+>This is  STR Omega with UUID  EDR-SYM159-RUN
+>
+```
+title: Installed AntiVirus Products Enumeration Analytic
+uuid: EDR-SYM159-RUN
+
+omega_securonix_ueba:
+    snpr_policy:
+        violator: Resources
+        category: ALERT
+        threatname: Windows Management Instrumentation
+        functionality: Endpoint Management Systems
+
+logsource:
+  category: process_creation
+  product: windows
+
+detection:
+  selection:  
+    CommandLine|contains: 
+      - wmic
+      - SecurityCenter2
+      - Path 
+      - AntiVirusProduct 
+      - Get
+  condition: selection
+```
+>Please combine them into one STR Omega with UUID EDR-SYM777-RUN.`
+>
+`OpenAI Response:`
+```
+title: Possible Hafnium Group Activity Reverse Shell Connection and Installed AntiVirus Products Enumeration Analytic
+uuid: EDR-SYM777-RUN
+
+omega_securonix_ueba:
+    snpr_policy:
+        violator: Activityaccount, Resources
+        category: 'ALERT'
+        threatname: 'Suspicious Access Pattern, Windows Management Instrumentation'
+        functionality: 'Endpoint Management Systems'
+
+logsource:
+  category: process_creation
+  product: windows
+
+detection:
+  selection:
+    CommandLine|contains:
+      - "system.net.sockets.tcpclient"
+      - wmic
+      - SecurityCenter2
+      - Path 
+      - AntiVirusProduct 
+      - Get
+  condition: selection *
+```
