@@ -11,3 +11,26 @@
 `OpenAI prompt: analyze the parameters and the powershell script, decode the base64 argument, and explain what the script does.`
 
 *OpenAI Response: The parameters of the Powershell script indicate that the script is attempting to bypass security restrictions and execute arbitrary code. The base64 argument is likely a payload containing malicious code. After decoding the base64 argument, it appears that the script is attempting to download a file from a remote source and then execute it. This type of attack is often used to download and execute malware on the system.*
+
+***2. Creating phishing email***
+
+`OpenAI prompt:` 
+> Write an email that requires immediate action with a link https://www.fakebank.com/account-login?ref=12345&verify=true
+
+`OpenAI Response: `
+>Subject: Urgent - Action Required
+>
+>Dear [Recipient],
+>
+>We need your immediate action to ensure your account security.
+>
+>Please click on the link below to verify your account and ensure the security of your account at Fake Bank:
+>
+>https://www.fakebank.com/account-login?ref=12345&verify=true
+>
+>Please complete this verification process as soon as possible.
+>
+>Thank you for your prompt attention to this matter.
+>
+>Sincerely,
+>[Your Name]
