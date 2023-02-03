@@ -121,3 +121,84 @@ level: high
 
 `OpenAI Response:`
 >  rg_functionality = "Process Create" AND (deviceaction = "ProcessCreate" OR deviceaction = "ProcessCreate (rule: ProcessCreate)" OR deviceaction = "ProcessRollup2" OR deviceaction = "SyntheticProcessRollUp2" OR deviceaction = "WmiCreateProcess" OR deviceaction = "Trace Executed Process" OR deviceaction = "Process" OR deviceaction = "Childproc" OR deviceaction = "Procstart" OR deviceaction = "Process Activity: Launched") AND CommandLine CONTAINS "osascript" AND CommandLine CONTAINS " -e " AND CommandLine CONTAINS "eval" AND CommandLine CONTAINS "NSData.dataWithContentsOfURL" AND (CommandLine CONTAINS " -l " AND CommandLine CONTAINS "JavaScript") OR CommandLine CONTAINS ".js"
+
+***6. Building STR Omega from Spotter query***
+
+`OpenAI prompt:`
+> This is an example of an STR Omega yaml structure
+```
+# omega - compound/second order attack behavior detection by Securonix
+title: System Information Discovery WMIC Command LineAnalytics
+uuid: EDR-SYM315-RUN
+tldr: An adversary may attempt to get detailed information about the operating system and hardware.
+
+reference: https://www.varonis.com/blog/alphv-blackcat-ransomware
+
+tags:
+  - attack.discovery
+  - attack.t1082
+  - BlackCat
+  - Ransomware as a Service (RaaS) 
+
+omega_securonix_ueba:
+    snpr_policy:
+        violator: Activityaccount
+        category: ALERT
+        threatname: Suspicious Access Pattern
+        functionality: Endpoint Management Systems 
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith: wmic.exe
+        CommandLine|contains: get
+    filter:
+        CommandLine|contains: 
+            - MACAddress
+            - UUID
+            - Win32_videocontroller
+            - ComputerSystem
+            - OS
+            - logicaldisk
+    condition: selection and filter
+```
+> Please build STR Omega for the following  query:
+>rg_functionality = “Endpoint Management Systems” AND (deviceaction = “Process Create” OR deviceaction = “ProcessCreate” OR deviceaction = “Process Create (rule: ProcessCreate)” OR deviceaction = “ProcessRollup2” OR deviceaction = “SyntheticProcessRollUp2” OR deviceaction = “WmiCreateProcess” OR deviceaction = “Trace Executed Process” OR deviceaction = “Process” OR deviceaction = “Childproc” OR deviceaction = “Procstart” OR deviceaction = “Process Activity: Launched”) AND destinationprocessname = “certutil.exe” AND resourcecustomfield1 CONTAINS “-decode” AND resourcecustomfield1 CONTAINS “Cortana” AND resourcecustomfield1 CONTAINS “.rar”`
+
+`OpenAI Response:`
+```
+title: Certutil.exe Command Line Activity
+uuid: EDR-SYM315-CERTUTIL
+tldr: An adversary may use certutil.exe command line to decode and extract files from a .rar file.
+
+reference: https://attack.mitre.org/techniques/T1122/
+
+tags:
+  - attack.t1122
+  - attack.execution
+
+omega_securonix_ueba:
+    snpr_policy:
+        violator: Activityaccount
+        category: ALERT
+        threatname: Suspicious Access Pattern
+        functionality: Endpoint Management Systems 
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith: certutil.exe
+        CommandLine|contains: -decode
+        CommandLine|contains: Cortana
+        CommandLine|contains: .rar
+    condition: selection 
+    filter:
+        CommandLine|contains:
+            - decode
+            - Cortana
+            - .rar *
+```
