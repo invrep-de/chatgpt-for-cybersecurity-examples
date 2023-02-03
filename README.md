@@ -35,7 +35,7 @@
 >Sincerely,
 >[Your Name]
 
-***3. Check if email is phishing***
+<h4>3. Check if email is phishing</h4>
 `OpenAI prompt:` 
 > Do you think this email looks like phishing? Answer in 1 word
 > Subject: Urgent - Action Required
@@ -58,7 +58,7 @@
 `OpenAI Response: `
 > Yes
 > 
-***4. Building Spotter Query for IOCs***
+<h4>4. Building Spotter Query for IOCs</h4>
 
 `OpenAI prompt:` 
 > This is an example of a spotter query:
@@ -71,7 +71,7 @@
 `OpenAI Response:` 
 > index=activity AND rg_functionality="Web Proxy" AND destinationaddress NOT NULL AND destinationaddress IN ("192.185.129.139","76.25.142.196")
 
-***5. Building Spotter Query from YAML***
+<h4>5. Building Spotter Query from YAML</h4>
 
 `OpenAI prompt:` 
 > This is an example of a spotter query:
@@ -122,7 +122,7 @@ level: high
 `OpenAI Response:`
 >  rg_functionality = "Process Create" AND (deviceaction = "ProcessCreate" OR deviceaction = "ProcessCreate (rule: ProcessCreate)" OR deviceaction = "ProcessRollup2" OR deviceaction = "SyntheticProcessRollUp2" OR deviceaction = "WmiCreateProcess" OR deviceaction = "Trace Executed Process" OR deviceaction = "Process" OR deviceaction = "Childproc" OR deviceaction = "Procstart" OR deviceaction = "Process Activity: Launched") AND CommandLine CONTAINS "osascript" AND CommandLine CONTAINS " -e " AND CommandLine CONTAINS "eval" AND CommandLine CONTAINS "NSData.dataWithContentsOfURL" AND (CommandLine CONTAINS " -l " AND CommandLine CONTAINS "JavaScript") OR CommandLine CONTAINS ".js"
 
-***6. Building STR Omega from Spotter query***
+<h4>6. Building STR Omega from Spotter query</h4>
 
 `OpenAI prompt:`
 > This is an example of an STR Omega yaml structure
@@ -202,7 +202,7 @@ detection:
             - Cortana
             - .rar *
 ```
-***7. Updating STR Omega with filter values***
+<h4>7. Updating STR Omega with filter values</h4>
 
 `OpenAI prompt:`
 >  This is an example of an STR Omega yaml structure
@@ -280,7 +280,7 @@ detection:
 ```
 
 
-***8. Combining STR Omegas***
+<h4>8. Combining STR Omegas</h4>
 
 `OpenAI prompt:` 
 > This is  STR Omega with UUID EDR-SYM158-RUN
