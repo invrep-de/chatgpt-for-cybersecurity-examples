@@ -53,7 +53,20 @@
 > Thank you for your prompt attention to this matter.
 > 
 > Sincerely,
-> [Your Name]`
+> [Your Name]
 
 `OpenAI Response: `
 > Yes
+> 
+***4. Building Spotter Query for IOCs***
+
+`OpenAI prompt:` 
+> This is an example of a spotter query:
+> index=activity AND rg_functionality="Web Proxy" AND destinationaddress NOT NULL AND destinationaddress IN ("163.123.142.210","185.106.94.146",> "45.142.122.11","51.255.171.23")
+> 
+> Please build a spotter query for the following IOCs:
+> - 192.185.129.139
+> - 76.25.142.196
+
+`OpenAI Response:` 
+> index=activity AND rg_functionality="Web Proxy" AND destinationaddress NOT NULL AND destinationaddress IN ("192.185.129.139","76.25.142.196")
