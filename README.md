@@ -1,4 +1,4 @@
-# star-ai-examples
+# *-chatgpt-ai-examples
 
 ***1. Suspicious Event Unpacking and Explanation***
 
