@@ -1,6 +1,6 @@
 # *-chatgpt-ai-examples
 
-***1. Suspicious Event Unpacking and Explanation***
+<h4>1. Suspicious Event Unpacking and Explanation</h4>
 
 `OpenAI prompt: please analyze the suspicious event below and explain what's going on.`
 
@@ -12,7 +12,7 @@
 
 *OpenAI Response: The parameters of the Powershell script indicate that the script is attempting to bypass security restrictions and execute arbitrary code. The base64 argument is likely a payload containing malicious code. After decoding the base64 argument, it appears that the script is attempting to download a file from a remote source and then execute it. This type of attack is often used to download and execute malware on the system.*
 
-***2. Creating phishing email***
+<h4>2. Creating phishing email</h4>
 
 `OpenAI prompt:` 
 > Write an email that requires immediate action with a link https://www.fakebank.com/account-login?ref=12345&verify=true
