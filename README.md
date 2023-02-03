@@ -34,3 +34,26 @@
 >
 >Sincerely,
 >[Your Name]
+
+***3. Check if email is phishing***
+`OpenAI prompt:` 
+> Do you think this email looks like phishing? Answer in 1 word
+> Subject: Urgent - Action Required
+> 
+> Dear [Recipient],
+> 
+> We need your immediate action to ensure your account security.
+> 
+> Please click on the link below to verify your account and ensure the security of your account at Fake Bank:
+> 
+> https://www.fakebank.com/account-login?ref=12345&verify=true
+> 
+> Please complete this verification process as soon as possible.
+> 
+> Thank you for your prompt attention to this matter.
+> 
+> Sincerely,
+> [Your Name]`
+
+`OpenAI Response: `
+> Yes
