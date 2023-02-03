@@ -70,3 +70,54 @@
 
 `OpenAI Response:` 
 > index=activity AND rg_functionality="Web Proxy" AND destinationaddress NOT NULL AND destinationaddress IN ("192.185.129.139","76.25.142.196")
+
+***5. Building Spotter Query from YAML***
+
+`OpenAI prompt:` 
+> This is an example of a spotter query:
+> 
+> rg_functionality = “Endpoint Management Systems” AND (deviceaction = “Process Create” OR deviceaction = “ProcessCreate” OR deviceaction = “Process Create (rule: ProcessCreate)” OR deviceaction = “ProcessRollup2” OR deviceaction = “SyntheticProcessRollUp2” OR deviceaction = “WmiCreateProcess” OR deviceaction = “Trace Executed Process” OR deviceaction = “Process” OR deviceaction = “Childproc” OR deviceaction = “Procstart” OR deviceaction = “Process Activity: Launched”) AND destinationprocessname = “cmd.exe” AND resourcecustomfield1 CONTAINS “-decode” AND resourcecustomfield1 CONTAINS “.jpg.lnk”
+> 
+> Please build a spotter query for the following yaml:
+```
+title: JXA In-memory Execution Via OSAScript
+id: f1408a58-0e94-4165-b80a-da9f96cf6fc3
+related:
+    - id: 1bc2e6c5-0885-472b-bed6-be5ea8eace55
+      type: derived
+status: experimental
+description: Detects possible malicious execution of JXA in-memory via OSAScript
+references:
+    - https://redcanary.com/blog/applescript/
+author: Sohan G (D4rkCiph3r)
+date: 2023/01/31
+tags:
+    - attack.t1059.002
+    - attack.t1059.007
+    - attack.execution
+logsource:
+    product: macos
+    category: process_creation
+detection:
+    selection_main:
+        CommandLine|contains|all:
+            - 'osascript'
+            - ' -e '
+            - 'eval'
+            - 'NSData.dataWithContentsOfURL'
+    selection_js:
+        - CommandLine|contains|all:
+            - ' -l '
+            - 'JavaScript'
+        - CommandLine|contains: '.js'
+    condition: all of selection_*
+fields:
+    - CommandLine
+falsepositives:
+    - Unknown
+level: high
+```
+
+
+`OpenAI Response:`
+>  rg_functionality = "Process Create" AND (deviceaction = "ProcessCreate" OR deviceaction = "ProcessCreate (rule: ProcessCreate)" OR deviceaction = "ProcessRollup2" OR deviceaction = "SyntheticProcessRollUp2" OR deviceaction = "WmiCreateProcess" OR deviceaction = "Trace Executed Process" OR deviceaction = "Process" OR deviceaction = "Childproc" OR deviceaction = "Procstart" OR deviceaction = "Process Activity: Launched") AND CommandLine CONTAINS "osascript" AND CommandLine CONTAINS " -e " AND CommandLine CONTAINS "eval" AND CommandLine CONTAINS "NSData.dataWithContentsOfURL" AND (CommandLine CONTAINS " -l " AND CommandLine CONTAINS "JavaScript") OR CommandLine CONTAINS ".js"
