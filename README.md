@@ -202,3 +202,79 @@ detection:
             - Cortana
             - .rar *
 ```
+***7. Updating STR Omega with filter values***
+
+`OpenAI prompt:`
+>  This is an example of an STR Omega yaml structure
+```
+# omega - compound/second order attack behavior detection by Securonix
+title: Potential Formbook Infostealer Activity Process Self-Deleting Analytic
+uuid: EDR-SYM269-RUN
+tldr: Detect Formbook info stealer that uses self-deleting action
+
+tags:
+    - Formbook RAT
+    
+omega_securonix_ueba:
+    snpr_policy:
+        violator: Activityaccount
+        category: ALERT
+        threatname: Suspicious Access Pattern
+        functionality: Endpoint Management Systems 
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        ParentImage|endswith:
+            - services.exe
+            - chkdsk.exe
+            - cmstp.exe
+        Image|endswith: cmd.exe
+        CommandLine|contains|all:
+            - ' /c '
+            - ' del '
+    condition: selection
+```
+>
+>Print updated STR Omega with a filter key "filter" with an object  in the detection  section with  CommandLine containing any of the keywords:
+> - lab.local
+> - 127.0.0.1
+> under the detection key and modify the condition with a filter keyword to exclude false positives`
+>
+`OpenAI Response:`
+```
+title: Potential Formbook Infostealer Activity Process Self-Deleting Analytic
+uuid: EDR-SYM269-RUN
+tldr: Detect Formbook info stealer that uses self-deleting action
+
+tags:
+    - Formbook RAT
+    
+omega_securonix_ueba:
+    snpr_policy:
+        violator: Activityaccount
+        category: ALERT
+        threatname: Suspicious Access Pattern
+        functionality: Endpoint Management Systems 
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        ParentImage|endswith:
+            - services.exe
+            - chkdsk.exe
+            - cmstp.exe
+        Image|endswith: cmd.exe
+        CommandLine|contains|all:
+            - ' /c '
+            - ' del '
+        filter:
+            CommandLine|contains|any:
+                - lab.local
+                - 127.0.0.1
+    condition: selection && !filter *
+```
